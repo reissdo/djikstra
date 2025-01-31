@@ -40,7 +40,7 @@ def djikstra(adjMat,startNode,endNode):
     table = np.zeros((adjMat.shape[0],3),dtype=int) #list for every node: [wasVisited,cost,previousNode]
     
     for row in table:
-        row[1] = 1000
+        row[1] = 10**10
         row[2] = -1
 
     table[startNode][1] = 0 
