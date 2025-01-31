@@ -13,12 +13,12 @@ def createGraph(nNodes,maxWeight = 10,probab = 0.8,bidirectional=False):
     matrix = np.random.randint(1, maxWeight + 1, size=(nNodes, nNodes))
     mask = np.random.rand(nNodes, nNodes) < probab
     matrix = matrix * mask
-    np.fill_diagonal(matrix, 0)
     
     if bidirectional:
         matrix = matrix.dot(matrix.T)
-        matrix = (matrix != 0).astype(int)
-        np.fill_diagonal(matrix, 0)
+        #matrix = (matrix != 0).astype(int)
+        
+    np.fill_diagonal(matrix, 0)
     return matrix
         
 
@@ -28,7 +28,7 @@ def djikstra(adjMat,startNode,endNode):
     +start node [int]
     +end node [int]
     
-    finds the shortes path between start node and end node
+    finds the shortest path between start node and end node
     
     -path from start node to end node [list]
     """
@@ -87,19 +87,20 @@ def djikstra(adjMat,startNode,endNode):
     return path
 
 
-adjMat = createGraph(10,1,0.25,True)
+adjMat = createGraph(5,2,0.4,True)
 print(adjMat)
 
 startNode = 0
-endNode = 6
+endNode = 4
 
 path = djikstra(adjMat,startNode,endNode)
 print("\nfound path: ",path)
 
-# Graph aus der Adjazenzmatrix erstellen
-G = nx.from_numpy_matrix(adjMat)
 
-# Zeichnen des Graphen
-plt.figure(figsize=(5, 5))
-nx.draw(G, with_labels=True, node_color='lightblue', edge_color='gray', node_size=2000, font_size=12)
+G = nx.from_numpy_matrix(adjMat)
+pos = nx.spring_layout(G)
+plt.figure(figsize=(6, 6))
+nx.draw(G, pos, with_labels=True, node_color='skyblue', node_size=2000, edge_color='gray', font_size=12)
+edge_labels = nx.get_edge_attributes(G, 'weight')
+nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels)
 plt.show()
