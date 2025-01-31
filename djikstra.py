@@ -1,6 +1,8 @@
+import networkx as nx
 import numpy as np
+import matplotlib.pyplot as plt
 
-def createGraph(nNodes,maxWeight = 10,probab = 0.8):
+def createGraph(nNodes,maxWeight = 10,probab = 0.8,bidirectional=False):
     """
     +number of nodes [int]
     
@@ -8,13 +10,17 @@ def createGraph(nNodes,maxWeight = 10,probab = 0.8):
     
     -adjacency matrix [numpy array]
     """
-    
     matrix = np.random.randint(1, maxWeight + 1, size=(nNodes, nNodes))
     mask = np.random.rand(nNodes, nNodes) < probab
     matrix = matrix * mask
     np.fill_diagonal(matrix, 0)
-
+    
+    if bidirectional:
+        matrix = matrix.dot(matrix.T)
+        matrix = (matrix != 0).astype(int)
+        np.fill_diagonal(matrix, 0)
     return matrix
+        
 
 def djikstra(adjMat,startNode,endNode):
     """
@@ -81,10 +87,19 @@ def djikstra(adjMat,startNode,endNode):
     return path
 
 
-adjMat = createGraph(20,10,0.1)
+adjMat = createGraph(10,1,0.25,True)
 print(adjMat)
+
 startNode = 0
-endNode = 19
+endNode = 6
 
 path = djikstra(adjMat,startNode,endNode)
-print(path)
+print("\nfound path: ",path)
+
+# Graph aus der Adjazenzmatrix erstellen
+G = nx.from_numpy_matrix(adjMat)
+
+# Zeichnen des Graphen
+plt.figure(figsize=(5, 5))
+nx.draw(G, with_labels=True, node_color='lightblue', edge_color='gray', node_size=2000, font_size=12)
+plt.show()
